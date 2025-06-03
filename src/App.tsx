@@ -15,15 +15,19 @@ import {
   addEdge,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import { useFlowStore } from "./hooks";
 
 function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
+  const { setNodeStore, setEdgeStore } = useFlowStore(setNodes, setEdges);
+
   const onConnect = useCallback(
     (params) => {
       const newEdges = addEdge(params, edges);
       setEdges(newEdges);
+      setEdgeStore(newEdges);
     },
     [edges, setEdges]
   );
@@ -32,6 +36,7 @@ function App() {
     (changes) => {
       const changedNodes = applyNodeChanges(changes, nodes);
       setNodes(changedNodes);
+      setNodeStore(changedNodes);
       console.log("Changed nodes:", changedNodes);
     },
     [nodes, setNodes]
@@ -41,6 +46,7 @@ function App() {
     (changes) => {
       const changedEdges = applyEdgeChanges(changes, edges);
       setEdges(changedEdges);
+      setEdgeStore(changedEdges);
     },
     [edges, setEdges]
   );
